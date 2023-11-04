@@ -1,7 +1,7 @@
 import React from 'react';
 import NavigationBar from '../components/navigationBar';
 
-function Landing() {
+const Landing = () => {
   return (
     <div>
       <NavigationBar />
