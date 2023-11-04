@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Landing from './pages/Landing';
 import SignIn from './pages/SignIn';
@@ -12,15 +12,17 @@ import Chatting from './pages/Chat';
 function App() {
   return (
     <div>
-       <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/article" element={<Article />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/recruiting" element={<Recruiting />} />
-          <Route path="/chat" element={<Chatting />} />
-      </Routes>
+      <Router>
+        <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/article" element={<Article />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/recruiting" element={<Recruiting />} />
+            <Route path="/chatting" element={<Chatting />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
