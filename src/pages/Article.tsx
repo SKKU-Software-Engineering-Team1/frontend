@@ -1,8 +1,10 @@
 import React from 'react';
+import NavigationBar from '../components/navigationBar';
 
-function Article() {
+const Article = () => {
   return (
     <div>
+      <NavigationBar />
     </div>
   );
 }
