@@ -38,7 +38,6 @@ const NavigationBar = () => {
     navigate("/profile");
   }
 
-  console.log(currentPage);
   return (
     <NavigationBarWrapper>
         <LogoWrapper>
