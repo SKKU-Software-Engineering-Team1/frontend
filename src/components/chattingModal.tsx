@@ -1,15 +1,27 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from "@chakra-ui/react"
+import axios from 'axios';
 
-const ChattingModal = ({ isOpen, onClose }: {isOpen:boolean, onClose: () => void} ) => {
+const ChattingModal = ({ isOpen, onClose, id }: {isOpen: boolean, onClose: () => void, id: string} ) => {
 
   const [chattingList, setChattingList] = useState([['','']])
   const [chat, setChat] = useState('')
   const messageEndRef = useRef<HTMLDivElement | null>(null);
 
-
   useEffect(() => {
+    // const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const serverUrl = 'http://localhost:8080/';
+    
+    axios
+      .get(`${serverUrl}api/chat/getChatRoomRecord/${id}`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
     var chattingList = [
       ['me', '안녕하세요~'],
       ['you', '안녕하세요~..우와아아ㅏ앙ㅇ닐ㅇ랑넹ㄹㄴㅁ엔렌네퍼ㅡㅔㅇㄹ페'],

@@ -1,9 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NavigationBar from '../components/navigationBar';
 import styled from 'styled-components';
 import ChattingListItem from '../components/chattingListItem';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const Chatting = () => {
+  const [chattingList, setChattingList] = useState([])
+
+  useEffect(() => {
+    // const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const serverUrl = 'http://localhost:8080/';
+    
+    axios
+      .get(`${serverUrl}api/chat/getChatRoomRecord`,{timeout: 1000})
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        console.log('finally');
+      });
+
+  }, []);
+
   return (
     <div>
       <NavigationBar />

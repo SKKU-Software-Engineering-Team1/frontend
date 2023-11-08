@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import profilelogo from '../assets/profilelogo.svg';
 import { useDisclosure } from "@chakra-ui/react"
 import ChattingModal from './chattingModal';
+import { useState } from 'react';
+import axios from 'axios';
 
-const ChattingListItem = () => {
+const ChattingListItem = (props: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  
+  const onClickOpen = () => {
+    onOpen()
+  }
 
   return (
-    <ChattingListItemWrapper onClick={onOpen}>
+    <ChattingListItemWrapper onClick={onClickOpen}>
       <ChattingModal onClose={onClose} isOpen={isOpen} />
       <ChattingListItemIcon>
         <ChattingListItemIconImg src={profilelogo} />
