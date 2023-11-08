@@ -1,25 +1,56 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from "@chakra-ui/react"
+import axios from 'axios';
 
-const ChattingModal = ({ isOpen, onClose }: {isOpen:boolean, onClose: () => void} ) => {
+const ChattingModal = ({ isOpen, onClose, id }: {isOpen: boolean, onClose: () => void, id: string} ) => {
 
-  const [chattingList, setChattingList] = useState([['','']])
+  const [initialText, setInitialText] = useState('')
+  const [chattingList, setChattingList] = useState([['', '']])
   const [chat, setChat] = useState('')
   const messageEndRef = useRef<HTMLDivElement | null>(null);
 
+  const [myName, setMyName] = useState('')
 
   useEffect(() => {
-    var chattingList = [
-      ['me', '안녕하세요~'],
-      ['you', '안녕하세요~..우와아아ㅏ앙ㅇ닐ㅇ랑넹ㄹㄴㅁ엔렌네퍼ㅡㅔㅇㄹ페'],
-      ['me', 'ㄷㄷ'],
-      ['me', '머임'],
-      ['you', '히히 ㅈㅅ'],
-      ['you', '히히 ㅈㅅ'],
-    ]
+    // const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const serverUrl = 'http://localhost:8080/';
+    var chattingList = [['','']]
+
+    var myName = ''
+    axios
+      .get(`${serverUrl}api/UserInfo/userInfo`)
+      .then((response) => {
+        myName = response.data.data.userName
+        setMyName(myName)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .get(`${serverUrl}api/chat/findAllTextWithRoomID/${id}`)
+      .then((response) => {
+        console.log(response.data);
+        var data = response.data.data
+        var initialText = data[0].chatTextContent
+        setInitialText(initialText)
+
+        for (var i = 1; i < data.length; i++) {
+          var sender = data[i].chatTextWriter == myName ? 'me' : 'you'
+          var text = data[i].chatTextContent
+          var chat = [sender, text]
+          chattingList.push(chat)
+        }
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
     setChattingList(chattingList)
   }, [])
+  //TODO: Setinterval
 
   useEffect(() => {
     if (messageEndRef.current){
@@ -41,6 +72,19 @@ const ChattingModal = ({ isOpen, onClose }: {isOpen:boolean, onClose: () => void
     var myChat = ['me', chat]
     setChattingList([...chattingList, myChat])
 
+    axios.post('http://localhost:8080/api/chat/requestChat', {
+      roomId: id,
+      chatTextWriter: myName,
+      chatTextContent: chat
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      }
+    );
+
     setChat('')
   }
   
@@ -53,6 +97,9 @@ const ChattingModal = ({ isOpen, onClose }: {isOpen:boolean, onClose: () => void
           <ModalCloseButton />
           <ModalBody>
             <ChatContainer>
+              <InitialText>
+                {initialText}
+              </InitialText>
               {/* <MyChatWrapper>
                 <MyChat>
                   안녕하세요~
@@ -157,4 +204,14 @@ const ChatContainer = styled.div`
   height: 450px;
   overflow-y: scroll;
   padding: 10px;
+`;
+
+const InitialText = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%;
+  color: rgba(0, 0, 0, 0.60);
 `;

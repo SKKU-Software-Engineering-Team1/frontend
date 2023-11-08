@@ -16,7 +16,8 @@ const SignIn = () => {
   };
 
   const onClickLogin = () => {
-    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    // const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const serverUrl = 'http://localhost:8080/api/'
     const userData = {
       userEmail: email,
       userPassword: password,
@@ -26,14 +27,19 @@ const SignIn = () => {
     axios
       .post(`${serverUrl}login/login`, userData)
       .then((response) => {
-        const { accessToken, refreshToken } = response.data;
+        const { accessToken, refreshToken } = response.data.data;
+        console.log(response.data.data)
 
         // accessToken을 localStorage에 저장
         localStorage.setItem("accessToken", accessToken);
+        axios.defaults.headers.common["AccessToken"] = accessToken
 
         // refreshToken을 localStorage에 저장
         localStorage.setItem("refreshToken", refreshToken);
-        navigate("/home");
+
+        // axios.defaults.headers.common["RefreshToken"] = refreshToken
+
+        navigate("/chatting");
       })
       .catch((error) => {
         // 로그인에 실패했을 때의 처리
