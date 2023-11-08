@@ -48,16 +48,9 @@ const ChattingModal = ({ isOpen, onClose, id }: {isOpen: boolean, onClose: () =>
         console.log(error);
       });
 
-    // var chattingList = [
-    //   ['me', '안녕하세요~'],
-    //   ['you', '안녕하세요~..우와아아ㅏ앙ㅇ닐ㅇ랑넹ㄹㄴㅁ엔렌네퍼ㅡㅔㅇㄹ페'],
-    //   ['me', 'ㄷㄷ'],
-    //   ['me', '머임'],
-    //   ['you', '히히 ㅈㅅ'],
-    //   ['you', '히히 ㅈㅅ'],
-    // ]
     setChattingList(chattingList)
   }, [])
+  //TODO: Setinterval
 
   useEffect(() => {
     if (messageEndRef.current){
@@ -78,6 +71,17 @@ const ChattingModal = ({ isOpen, onClose, id }: {isOpen: boolean, onClose: () =>
   const onClickSend = () => {
     var myChat = ['me', chat]
     setChattingList([...chattingList, myChat])
+
+    axios.post('http://localhost:8080/api/chat/sendChat', {
+      roomId: id,
+      chatTextWriter: myName,
+      chatTextContent: chat
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
 
     setChat('')
   }
