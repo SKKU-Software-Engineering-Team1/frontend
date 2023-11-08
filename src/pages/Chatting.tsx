@@ -11,11 +11,11 @@ const Chatting = () => {
   useEffect(() => {
     // const serverUrl = process.env.REACT_APP_SERVER_URL;
     const serverUrl = 'http://localhost:8080/';
-    
+
     axios
       .get(`${serverUrl}api/chat/getChatRoomRecord`,{timeout: 1000})
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.data);
       })
       .catch((error) => {
         console.log(error);

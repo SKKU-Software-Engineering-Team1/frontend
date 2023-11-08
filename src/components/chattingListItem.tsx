@@ -15,7 +15,7 @@ const ChattingListItem = (props: any) => {
 
   return (
     <ChattingListItemWrapper onClick={onClickOpen}>
-      <ChattingModal onClose={onClose} isOpen={isOpen} />
+      <ChattingModal onClose={onClose} isOpen={isOpen} id={props.key}/>
       <ChattingListItemIcon>
         <ChattingListItemIconImg src={profilelogo} />
       </ChattingListItemIcon>
