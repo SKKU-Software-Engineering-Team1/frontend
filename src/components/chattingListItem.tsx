@@ -15,16 +15,16 @@ const ChattingListItem = (props: any) => {
 
   return (
     <ChattingListItemWrapper onClick={onClickOpen}>
-      <ChattingModal onClose={onClose} isOpen={isOpen} />
+      <ChattingModal onClose={onClose} isOpen={isOpen} id={props.roomId} />
       <ChattingListItemIcon>
         <ChattingListItemIconImg src={profilelogo} />
       </ChattingListItemIcon>
       <ChattingListItemTextWrapper>
         <ChattingListItemName>
-          최영주
+          {props.lastSender}
         </ChattingListItemName>
         <ChattingListItemText>
-          안녕하세요~ 동아리 관련 문의드립니다.
+          {props.lastMessage}
         </ChattingListItemText>
       </ChattingListItemTextWrapper>
     </ChattingListItemWrapper>

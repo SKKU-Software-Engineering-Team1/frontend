@@ -6,16 +6,29 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 const Chatting = () => {
-  const [chattingList, setChattingList] = useState([])
+  const [chattingList, setChattingList] = useState([{}])
 
   useEffect(() => {
     // const serverUrl = process.env.REACT_APP_SERVER_URL;
     const serverUrl = 'http://localhost:8080/';
-    
+    const list = [{}]
     axios
       .get(`${serverUrl}api/chat/getChatRoomRecord`,{timeout: 1000})
       .then((response) => {
-        console.log(response.data);
+        var data = response.data.data
+        for (var i = 0; i < data.length; i++) {
+          var roomId = data[i].roomId
+          var lastMessage = data[i].lastMessage
+          var lastSender = data[i].lastSender
+
+          var chattingListItem = {
+            roomId: roomId,
+            lastMessage: lastMessage,
+            lastSender: lastSender
+          }
+          list.push(chattingListItem)
+        }
+        setChattingList(list)
       })
       .catch((error) => {
         console.log(error);
@@ -35,9 +48,9 @@ const Chatting = () => {
         </TitleText>
       </TitleWrapper>
       <ChattingListContainer>
-        <ChattingListItem />
-        <ChattingListItem />
-        <ChattingListItem />
+        {chattingList.map((chattingListItem: any) => (
+          <ChattingListItem roomId={chattingListItem.roomId} lastMessage={chattingListItem.lastMessage} lastSender={chattingListItem.lastSender} />
+        ))}
       </ChattingListContainer>
     </div>
   );
