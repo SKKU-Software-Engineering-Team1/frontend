@@ -7,7 +7,7 @@ import SignUp from './pages/SignUp';
 import Article from './pages/Article';
 import Profile from './pages/Profile';
 import Recruiting from './pages/Recruiting';
-import Chatting from './pages/Chat';
+import Chatting from './pages/Chatting';
 
 function App() {
   return (
