@@ -72,7 +72,7 @@ const ChattingModal = ({ isOpen, onClose, id }: {isOpen: boolean, onClose: () =>
     var myChat = ['me', chat]
     setChattingList([...chattingList, myChat])
 
-    axios.post('http://localhost:8080/api/chat/sendChat', {
+    axios.post('http://localhost:8080/api/chat/requestChat', {
       roomId: id,
       chatTextWriter: myName,
       chatTextContent: chat
@@ -82,6 +82,8 @@ const ChattingModal = ({ isOpen, onClose, id }: {isOpen: boolean, onClose: () =>
       })
       .catch(function (error) {
         console.log(error);
+      }
+    );
 
     setChat('')
   }
