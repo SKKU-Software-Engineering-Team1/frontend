@@ -1,0 +1,160 @@
+import React, { useEffect, useState, useRef } from 'react';
+import styled from 'styled-components';
+import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from "@chakra-ui/react"
+
+const ChattingModal = ({ isOpen, onClose }: {isOpen:boolean, onClose: () => void} ) => {
+
+  const [chattingList, setChattingList] = useState([['','']])
+  const [chat, setChat] = useState('')
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
+
+
+  useEffect(() => {
+    var chattingList = [
+      ['me', '안녕하세요~'],
+      ['you', '안녕하세요~..우와아아ㅏ앙ㅇ닐ㅇ랑넹ㄹㄴㅁ엔렌네퍼ㅡㅔㅇㄹ페'],
+      ['me', 'ㄷㄷ'],
+      ['me', '머임'],
+      ['you', '히히 ㅈㅅ'],
+      ['you', '히히 ㅈㅅ'],
+    ]
+    setChattingList(chattingList)
+  }, [])
+
+  useEffect(() => {
+    if (messageEndRef.current){
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chattingList]);
+
+  const handleOnKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      onClickSend();
+    }
+  };
+
+  const onChangeChat = (e: any) => {
+    setChat(e.target.value)
+  }
+
+  const onClickSend = () => {
+    var myChat = ['me', chat]
+    setChattingList([...chattingList, myChat])
+
+    setChat('')
+  }
+  
+
+  return (
+    <Modal onClose={onClose} isOpen={isOpen} isCentered size={'xl'}>
+        <ModalOverlay />
+        <ModalContent padding={'10px'} maxHeight={'650px'}>
+          <ModalHeader>최영주님과의 채팅</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ChatContainer>
+              {/* <MyChatWrapper>
+                <MyChat>
+                  안녕하세요~
+                </MyChat>
+              </MyChatWrapper>
+              <YourChatWrapper>
+                <YourChat>
+                  안녕하세요~..우와아아ㅏ앙ㅇ닐ㅇ랑넹ㄹㄴㅁ엔렌네퍼ㅡㅔㅇㄹ페
+                </YourChat>
+              </YourChatWrapper> */}
+              {chattingList.map((chat) => {
+                if (chat[0] == 'me'){
+                  return (
+                    <MyChatWrapper>
+                      <MyChat>
+                        {chat[1]}
+                      </MyChat>
+                    </MyChatWrapper>
+                  )
+                } else {
+                  return (
+                    <YourChatWrapper>
+                      <YourChat>
+                        {chat[1]}
+                      </YourChat>
+                    </YourChatWrapper>
+                  )
+                }
+              })}
+              <div ref={messageEndRef}></div> 
+            </ChatContainer>
+          </ModalBody>
+          <ModalFooter>
+            <Input onChange={onChangeChat} onKeyPress={handleOnKeyPress} value={chat} placeholder='Basic usage' borderRadius='full'/>
+            <Button onClick={onClickSend} bg="teal.400" mr={3} color={"white"} marginLeft={"10px"} borderRadius={'full'}>
+              Send
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+  );
+}
+
+export default ChattingModal;
+
+const MyChatWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+`;
+
+const MyChat = styled.div`
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px 0px 20px 20px;
+  border: 1px solid rgba(194, 194, 194, 0.50);
+  background: #FFF;
+  color: rgba(0, 0, 0, 0.60);
+  text-align: right;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%;
+  max-width: 70%;
+  margin-right: 10px;
+  margin-bottom: 10px;
+`;
+
+const YourChat = styled.div`
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 0px 20px 20px 20px;
+  background: var(--teal-400, #38B2AC);
+  color: var(--white, #FFF);
+  color: #EDF2F7;
+  text-align: left;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%;
+  max-width: 70%;
+  margin-left: 10px;
+  margin-bottom: 10px;
+`
+
+const YourChatWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+`;
+
+const ChatContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 450px;
+  overflow-y: scroll;
+  padding: 10px;
+`;

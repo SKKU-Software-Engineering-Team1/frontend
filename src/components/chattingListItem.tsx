@@ -1,10 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import profilelogo from '../assets/profilelogo.svg';
+import { useDisclosure } from "@chakra-ui/react"
+import ChattingModal from './chattingModal';
 
 const ChattingListItem = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
-    <ChattingListItemWrapper>
+    <ChattingListItemWrapper onClick={onOpen}>
+      <ChattingModal onClose={onClose} isOpen={isOpen} />
       <ChattingListItemIcon>
         <ChattingListItemIconImg src={profilelogo} />
       </ChattingListItemIcon>
@@ -30,6 +35,7 @@ const ChattingListItemWrapper = styled.div`
   border-bottom: 1px solid #234E5280;
   align-items: center;
   cursor: pointer;
+  padding-left: 20px;
   &:hover {
     background: rgba(0, 0, 0, 0.10);
   }
