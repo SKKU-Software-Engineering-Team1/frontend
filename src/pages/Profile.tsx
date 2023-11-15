@@ -58,10 +58,6 @@ const Profile = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL;
     const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
     const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
-    const header = {
-      "Content-Type": "application/json",
-      AccessToken: accessToken,
-    };
 
     axios
       .get(`${serverUrl}UserInfo/userInfo`, {
