@@ -193,7 +193,7 @@ const LandingVideo = () => {
         }}
       >
         <Link to="/profile" style={{ textDecoration: "none", color: "#fff" }}>
-          get start
+          get started
         </Link>
       </CanvasText>
     </CanvasSectionBlock>

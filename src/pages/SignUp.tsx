@@ -4,6 +4,7 @@ import signImg from "../assets/signimg.png";
 import logo from "../assets/logo.svg";
 import { Input, Button, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -14,18 +15,55 @@ const SignUp = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState(1);
+  const [campus, setCampus] = useState(1);
+  const [phone, setPhone] = useState("");
 
   const navigateToSignIn = () => {
     navigate("/signin");
   };
 
   const onClickSubmit = () => {
-    console.log(email, password, passwordCheck, name, age, gender);
+    if (!email || !password || !passwordCheck || !name || !age || !phone) {
+      alert("모든 항목을 입력해주세요.");
+      return;
+    }
     if (password != passwordCheck) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
+    if (!(email.endsWith("@skku.edu") || email.endsWith("@g.skku.edu"))) {
+      alert("성균관대학교 학생만 가입 가능합니다.");
+      return;
+    }
     //sign up api
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    // const serverUrl = "http://localhost:8080/api/";
+    const userData = {
+      userEmail: email,
+      userPassword: password,
+      userAge: age,
+      userName: name,
+      userGender: gender === 1 ? "MALE" : "FEMALE",
+      userPhoneNumber: phone,
+      userCampus: campus === 1 ? "HUMANITIES_AND_SOCIAL_SCIENCES" : "NATURAL_SCIENCE",
+      userTags: [],
+    };
+
+    // Replace 'your_login_api_url' with the actual URL of your login API
+    axios
+      .post(`${serverUrl}login/signUp`, userData)
+      .then((response) => {
+        alert("회원가입이 완료되었습니다.");
+
+        navigate("/signin");
+      })
+      .catch((error) => {
+        if (error.response && error.response.data && error.response.data.message) {
+          alert(error.response.data.message);
+        } else {
+          alert("회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+        }
+      });
 
     setEmail("");
     setPassword("");
@@ -42,6 +80,10 @@ const SignUp = () => {
     setGender(e);
   };
 
+  const onChangeCampus = (e: any) => {
+    setCampus(e);
+  };
+
   const onChangeAge = (e: any) => {
     setAge(e.target.value);
   };
@@ -56,6 +98,10 @@ const SignUp = () => {
 
   const onChangePasswordCheck = (e: any) => {
     setPasswordCheck(e.target.value);
+  };
+
+  const onChangePhone = (e: any) => {
+    setPhone(e.target.value);
   };
 
   return (
@@ -82,6 +128,21 @@ const SignUp = () => {
             </Stack>
           </RadioGroup>
         </InputWrapper>
+
+        <InputWrapper>
+          <InputText>Campus</InputText>
+          <RadioGroup defaultValue="1" onChange={onChangeCampus}>
+            <Stack spacing={5} direction="column">
+              {" "}
+              <Radio colorScheme="teal" value="1">
+                Humanities and Social Sciences
+              </Radio>
+              <Radio colorScheme="teal" value="2">
+                Natural Science
+              </Radio>
+            </Stack>
+          </RadioGroup>
+        </InputWrapper>
         <InputWrapper>
           <InputText>Age</InputText>
           <Input placeholder="Age" type="number" onChange={onChangeAge} />
@@ -89,6 +150,10 @@ const SignUp = () => {
         <InputWrapper>
           <InputText>Email</InputText>
           <Input placeholder="Email" type="email" onChange={onChangeEmail} />
+        </InputWrapper>
+        <InputWrapper>
+          <InputText>Phone</InputText>
+          <Input placeholder="010-XXXX-XXXX" type="text" onChange={onChangePhone} />
         </InputWrapper>
         <InputWrapper>
           <InputText>Password</InputText>

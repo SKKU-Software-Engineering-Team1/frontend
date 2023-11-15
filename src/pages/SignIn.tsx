@@ -16,8 +16,8 @@ const SignIn = () => {
   };
 
   const onClickLogin = () => {
-    // const serverUrl = process.env.REACT_APP_SERVER_URL;
-    const serverUrl = "http://localhost:8080/api/";
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    // const serverUrl = "http://localhost:8080/api/";
     const userData = {
       userEmail: email,
       userPassword: password,
@@ -39,7 +39,7 @@ const SignIn = () => {
 
         // axios.defaults.headers.common["RefreshToken"] = refreshToken
 
-        navigate("/chatting");
+        navigate("/");
       })
       .catch((error) => {
         // 로그인에 실패했을 때의 처리
