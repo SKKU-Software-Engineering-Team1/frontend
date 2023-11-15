@@ -10,6 +10,7 @@ import Recruiting from "./pages/Recruiting";
 import Chatting from "./pages/Chatting";
 import { useLocation } from "react-router-dom";
 
+// 페이지 이동 시에도 항상 스크롤이 최상단에 위치하도록
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 

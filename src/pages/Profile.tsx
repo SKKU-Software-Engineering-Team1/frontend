@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+// prettier-ignore
+
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import NavigationBar from "../components/navigationBar";
 import profilelogo from "../assets/profilelogo.svg";
@@ -8,6 +10,7 @@ import { IconButton, PopoverTrigger, PopoverContent, Popover, PopoverArrow, Popo
 import ProfileTag from "../components/profileTag";
 import PreferenceCard from "../components/preferenceCard";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Form = (props: any) => {
   return (
@@ -42,8 +45,42 @@ const Profile = () => {
     }
   };
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState("");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState(1);
+  const [campus, setCampus] = useState(1);
+  const [phone, setPhone] = useState("");
+
+  const getUserInfo = () => {
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
+    const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
+    const header = {
+      "Content-Type": "application/json",
+      AccessToken: accessToken,
+    };
+
+    axios
+      .get(`${serverUrl}UserInfo/userInfo`, {
+        headers: {
+          "Content-Type": "application/json",
+          AccessToken: accessToken,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        alert("유저 정보를 불러오는데 실패했습니다.");
+      });
+  };
+
   useEffect(() => {
     signinChecker();
+    getUserInfo();
   }, []);
 
   return (
