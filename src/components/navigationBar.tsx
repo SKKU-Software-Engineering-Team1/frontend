@@ -15,13 +15,13 @@ const NavigationBar = () => {
 
   useEffect(() => {
     const path = window.location.pathname;
-    if (path == "/article") {
+    if (path === "/article") {
       setCurrentPage("article");
-    } else if (path == "/chatting") {
+    } else if (path === "/chatting") {
       setCurrentPage("chatting");
-    } else if (path == "/recruiting") {
+    } else if (path === "/recruiting") {
       setCurrentPage("recruiting");
-    } else if (path == "/profile") {
+    } else if (path === "/profile") {
       setCurrentPage("profile");
     }
   }, []);
@@ -40,7 +40,13 @@ const NavigationBar = () => {
   };
 
   return (
-    <NavigationBarWrapper>
+    <NavigationBarWrapper
+      style={{
+        position: currentPage === "" ? "fixed" : "relative",
+        top: currentPage === "" ? 0 : "auto",
+        left: currentPage === "" ? 0 : "auto",
+      }}
+    >
       <LogoWrapper>
         <Logo src={logo} onClick={navigateToHome} />
       </LogoWrapper>
@@ -62,9 +68,10 @@ const NavigationBar = () => {
 
 export default NavigationBar;
 
-const NavigationBarWrapper = styled.div`
+const NavigationBarWrapper = styled.nav`
   display: flex;
   flex-direction: row;
+  width: 100vw;
   height: 100px;
   border-bottom: 1px solid #234e5299;
   align-items: center;

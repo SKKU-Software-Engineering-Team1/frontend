@@ -3,7 +3,7 @@ import styled from "styled-components";
 import signImg from "../assets/signimg.png";
 import logo from "../assets/logo.svg";
 import { Input, Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SignIn = () => {
@@ -17,7 +17,7 @@ const SignIn = () => {
 
   const onClickLogin = () => {
     // const serverUrl = process.env.REACT_APP_SERVER_URL;
-    const serverUrl = 'http://localhost:8080/api/'
+    const serverUrl = "http://localhost:8080/api/";
     const userData = {
       userEmail: email,
       userPassword: password,
@@ -28,11 +28,11 @@ const SignIn = () => {
       .post(`${serverUrl}login/login`, userData)
       .then((response) => {
         const { accessToken, refreshToken } = response.data.data;
-        console.log(response.data.data)
+        console.log(response.data.data);
 
         // accessToken을 localStorage에 저장
         localStorage.setItem("accessToken", accessToken);
-        axios.defaults.headers.common["AccessToken"] = accessToken
+        axios.defaults.headers.common["AccessToken"] = accessToken;
 
         // refreshToken을 localStorage에 저장
         localStorage.setItem("refreshToken", refreshToken);
@@ -62,7 +62,9 @@ const SignIn = () => {
         <Img src={signImg} />
       </ImgWrapper>
       <InputContainer>
-        <LogoImg src={logo} />
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <LogoImg src={logo} />
+        </Link>
         <InputWrapper>
           <InputText>Email</InputText>
           <Input placeholder="Email" onChange={onChangeEmail} />
