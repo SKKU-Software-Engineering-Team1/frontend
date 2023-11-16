@@ -34,78 +34,53 @@ const Form = (props: any) => {
   );
 };
 
-const Profile = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+const ProfileUnion = () => {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [campus, setCampus] = useState("");
-  const [phone, setPhone] = useState("");
-  const [tag, setTag] = useState([]);
+
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = React.useRef(null);
   const navigate = useNavigate();
 
-  const getUserInfo = () => {
+  const [name, setName] = useState("");
+  const [contents, setContents] = useState("");
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
+  const [dues, setDues] = useState("");
+  const [sns, setSns] = useState("");
+  const [phone, setPhone] = useState("");
+  const [tag, setTag] = useState([]);
+
+  const getUnionInfo = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL;
     const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
     const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
+    const unionId = new URL(window.location.href).searchParams.get("id");
 
     axios
-      .get(`${serverUrl}UserInfo/userInfo`, {
-        headers: {
-          "Content-Type": "application/json",
-          AccessToken: accessToken,
-        },
-      })
+      .get(`${serverUrl}getUniInfo?Id=${unionId}`)
       .then((response) => {
-        const { userAge, userCampus, userEmail, userGender, userName, userPhoneNumber } = response.data.data;
-        const tags = response.data.data.userTags;
-        setEmail(userEmail);
-        setName(userName);
-        setAge(userAge);
-        setCampus(userCampus);
-        setGender(userGender);
-        setPhone(userPhoneNumber);
-        setTag(tags);
+        const { unionName, unionRecruit, unionRecruitDateStart, unionRecruitDateEnd, unionSkkuSub, unionDues, unionSns, unionContactPhone, unionTagsString } = response.data.data;
+
+        setName(unionName);
+        setContents(unionRecruit);
+        setDateStart(unionRecruitDateStart);
+        setDateEnd(unionRecruitDateEnd);
+        setDues(unionDues);
+        setSns(unionSns);
+        setPhone(unionContactPhone);
+        setTag(unionTagsString);
       })
       .catch((error) => {
-        if (error.response.data.state === 417) {
-          console.log("만료");
-          // alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-          // localStorage.clear();
-          // navigate("/signin");
-          axios
-            .get(`${serverUrl}UserInfo/userInfo`, {
-              headers: {
-                "Content-Type": "application/json",
-                AccessToken: accessToken,
-                RefreshToken: refToken,
-              },
-            })
-            .then((response) => {
-              localStorage.clear();
-              localStorage.setItem("accessToken", response.data.data.accessToken);
-              localStorage.setItem("refreshToken", response.data.data.refreshToken);
-              getUserInfo();
-            })
-            .catch((error) => {
-              alert("유저 정보를 불러오는데 실패했습니다.");
-              localStorage.clear();
-              navigate("/signin");
-            });
-        } else {
-          alert("유저 정보를 불러오는데 실패했습니다.");
-          localStorage.clear();
-          navigate("/signin");
-        }
+        alert("동아리 정보를 불러오는데 실패했습니다.");
       });
   };
 
   const signinChecker = () => {
     if (localStorage.getItem("accessToken") === null) {
       navigate("/signin");
-    } else getUserInfo();
+    } else getUnionInfo();
   };
 
   useEffect(() => {
@@ -116,34 +91,44 @@ const Profile = () => {
     <div>
       <NavigationBar />
       <TitleWrapper>
-        <TitleText>Profile</TitleText>
+        <TitleText>Article</TitleText>
       </TitleWrapper>
       <ProfileContainer>
+        <ProfileTitleContainer>
+          <ProfileTitle>{name}</ProfileTitle>
+          <ProfileTagContainer>
+            <ProfileTag tagname={"#성균관대학교"} />
+            {/* {tag.map((t: string, i: number) => (
+              <ProfileTag key={i} tagname={t} />
+            ))} */}
+          </ProfileTagContainer>
+        </ProfileTitleContainer>
+
         <ProfileWrapper>
           <ProfileLogoWrapper>
             <ProfileLogo src={profilelogo} />
-            <ChangePic>Change picture</ChangePic>
           </ProfileLogoWrapper>
+
           <ProfileTextContainer>
             <ProfileTextWrapper>
-              <ProfileTextTitle>Name</ProfileTextTitle>
-              <ProfileText>{name}</ProfileText>
+              <ProfileTextTitle>모집 시작</ProfileTextTitle>
+              <ProfileText>{dateStart}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
-              <ProfileTextTitle>Gender</ProfileTextTitle>
-              <ProfileText>{gender}</ProfileText>
+              <ProfileTextTitle>모집 마감</ProfileTextTitle>
+              <ProfileText>{dateEnd}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
-              <ProfileTextTitle>Age</ProfileTextTitle>
-              <ProfileText>{age}</ProfileText>
+              <ProfileTextTitle>Fee</ProfileTextTitle>
+              <ProfileText>{dues}₩</ProfileText>
+            </ProfileTextWrapper>
+            <ProfileTextWrapper>
+              <ProfileTextTitle>SNS</ProfileTextTitle>
+              <ProfileText>{sns}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>Phone Number</ProfileTextTitle>
               <ProfileText>{phone}</ProfileText>
-            </ProfileTextWrapper>
-            <ProfileTextWrapper>
-              <ProfileTextTitle>email</ProfileTextTitle>
-              <ProfileText>{email}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>Campus</ProfileTextTitle>
@@ -151,33 +136,10 @@ const Profile = () => {
             </ProfileTextWrapper>
           </ProfileTextContainer>
         </ProfileWrapper>
-        <AboutMeContainer>
-          <AboutMeTitle>About Me</AboutMeTitle>
-          <AboutMeText placeholder="About me" />
+        <AboutMeContainer style={{ whiteSpace: "pre-line" }}>
+          <AboutMeTitle>We Are</AboutMeTitle>
+          {contents}
         </AboutMeContainer>
-        <TagContainer>
-          <TagTitle>
-            Tag
-            {/* <TagMenuIcon src={tagMenuIcon} /> */}
-            <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose} placement="right" closeOnBlur={false}>
-              <PopoverTrigger>
-                <IconButton marginStart={"5px"} bg={"white"} size="sm" icon={<TagMenuIcon src={tagMenuIcon} />} aria-label={""} textAlign={"center"} />
-              </PopoverTrigger>
-              <PopoverContent p={5}>
-                <FocusLock persistentFocus={false}>
-                  <PopoverArrow />
-                  <PopoverCloseButton />
-                  <Form onCancel={onClose} />
-                </FocusLock>
-              </PopoverContent>
-            </Popover>
-          </TagTitle>
-          <TagWrapper>
-            {tag.map((t: string, i: number) => (
-              <ProfileTag key={i} tagname={t} />
-            ))}
-          </TagWrapper>
-        </TagContainer>
       </ProfileContainer>
       <SaveButtonWrapper>
         <Button variant="solid" bg="teal.400" color={"white"} width={"120px"} lineHeight={2.3}>
@@ -197,7 +159,7 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfileUnion;
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -205,6 +167,7 @@ const TitleWrapper = styled.div`
   border-bottom: 1px solid #234e52;
   margin-left: 2.5%;
   margin-right: 2.5%;
+  margin-bottom: 80px;
 `;
 
 const TitleText = styled.div`
@@ -224,11 +187,31 @@ const ProfileContainer = styled.div`
   margin-right: 2.5%;
   width: 95%;
   height: fit-content;
-  border-radius: 20px;
-  border: 1px solid var(--gray-200, #e2e8f0);
-  background: var(--white, #fff);
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 1px 3px 0px rgba(0, 0, 0, 0.1);
   margin-bottom: 40px;
+`;
+
+const ProfileTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 50px;
+`;
+
+const ProfileTitle = styled.div`
+  color: #285e61;
+
+  text-align: center;
+  font-family: Inter;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 150%; /* 48px */
+`;
+
+const ProfileTagContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const ProfileWrapper = styled.div`
@@ -246,8 +229,8 @@ const ProfileLogoWrapper = styled.div`
 `;
 
 const ProfileLogo = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
 `;
 
 const ChangePic = styled.div`

@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Recruiting from "./pages/Recruiting";
 import Chatting from "./pages/Chatting";
 import { useLocation } from "react-router-dom";
+import ProfileUnion from "./pages/ProfileUnion";
 
 // 페이지 이동 시에도 항상 스크롤이 최상단에 위치하도록
 const ScrollToTop = () => {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/article" element={<Article />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/union" element={<ProfileUnion />} />
           <Route path="/recruiting" element={<Recruiting />} />
           <Route path="/chatting" element={<Chatting />} />
         </Routes>

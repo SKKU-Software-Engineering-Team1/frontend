@@ -1,13 +1,54 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import NavigationBar from "../components/navigationBar";
 import styled from "styled-components";
 import { Input, InputGroup, InputRightAddon, Select, Grid } from "@chakra-ui/react";
 import searchIcon from "../assets/searchicon.svg";
 import ArticleCard from "../components/articleCard";
+import axios from "axios";
 
 const Article = () => {
-  const articles: any = [];
+  const [articles, setArticles] = useState([]);
+  const [showArticles, setShowArticles] = useState([]);
 
+  const [tags, setTags] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string>("");
+
+  const getArticles = () => {
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
+    const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
+
+    axios
+      .get(`${serverUrl}getArticle`)
+      .then((response) => {
+        const data = response.data.data;
+        setArticles(data);
+        setShowArticles(data);
+
+        const tagList = new Set<string>();
+        data.forEach((d: any) => {
+          tagList.add(d.unionCategory);
+        });
+        setTags(Array.from(tagList));
+      })
+      .catch((error) => {
+        alert("유저 정보를 불러오는데 실패했습니다." + error);
+      });
+  };
+
+  useEffect(() => {
+    getArticles();
+  }, []);
+
+  const handleTagChange = (e: any) => {
+    const tag = e.target.value;
+    setSelectedTag(tag);
+    if (tag === "") {
+      setShowArticles(articles);
+    } else {
+      setShowArticles(articles.filter((article: any) => article.unionCategory === tag));
+    }
+  };
   // useEffect(() => {
   //   for (let i = 0; i < 8; i++){
   //     articles.push({"image": "Image needs to be changed", "name": "성균관대학교 동아리"})
@@ -27,10 +68,10 @@ const Article = () => {
         </InputWrapper>
       </TitleWrapper>
       <SelectWrapper>
-        <Select placeholder="TAG" size="sm" width={"120px"} marginEnd={"15px"}>
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
+        <Select placeholder="TAG" size="sm" width={"120px"} marginEnd={"15px"} onChange={handleTagChange}>
+          {tags.map((tag: string) => (
+            <option value={tag}>{tag}</option>
+          ))}
         </Select>
         <Select placeholder="All View" width={"120px"} size="sm">
           <option value="option1">Option 1</option>
@@ -44,14 +85,9 @@ const Article = () => {
         </SortTextWrapper>
       </SelectWrapper>
       <Grid templateColumns="repeat(4, 1fr)" gap={10} paddingLeft={"100px"} paddingRight={"100px"}>
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
+        {showArticles.map((article: any, i: number) => (
+          <ArticleCard image={"Image needs to be changed"} id={article.id} name={article.unionName} category={article.unionCategory} />
+        ))}
       </Grid>
     </div>
   );

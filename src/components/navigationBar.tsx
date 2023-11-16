@@ -15,6 +15,7 @@ const NavigationBar = () => {
 
   useEffect(() => {
     const path = window.location.pathname;
+    console.log(path);
     if (path === "/article") {
       setCurrentPage("article");
     } else if (path === "/chatting") {
@@ -23,6 +24,8 @@ const NavigationBar = () => {
       setCurrentPage("recruiting");
     } else if (path === "/profile") {
       setCurrentPage("profile");
+    } else if (path === "/union/") {
+      setCurrentPage("union");
     }
   }, []);
 
