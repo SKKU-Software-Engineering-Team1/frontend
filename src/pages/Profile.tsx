@@ -11,6 +11,7 @@ import ProfileTag from "../components/profileTag";
 import PreferenceCard from "../components/preferenceCard";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TagBox from "../components/TagBox";
 
 const Form = (props: any) => {
   return (
@@ -42,8 +43,7 @@ const Profile = () => {
   const [campus, setCampus] = useState("");
   const [phone, setPhone] = useState("");
   const [tag, setTag] = useState([]);
-  const { onOpen, onClose, isOpen } = useDisclosure();
-  const firstFieldRef = React.useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const getUserInfo = () => {
@@ -159,10 +159,11 @@ const Profile = () => {
           <TagTitle>
             Tag
             {/* <TagMenuIcon src={tagMenuIcon} /> */}
-            <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose} placement="right" closeOnBlur={false}>
+            {/* <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose} placement="right" closeOnBlur={false}>
               <PopoverTrigger>
                 <IconButton marginStart={"5px"} bg={"white"} size="sm" icon={<TagMenuIcon src={tagMenuIcon} />} aria-label={""} textAlign={"center"} />
               </PopoverTrigger>
+              
               <PopoverContent p={5}>
                 <FocusLock persistentFocus={false}>
                   <PopoverArrow />
@@ -170,13 +171,28 @@ const Profile = () => {
                   <Form onCancel={onClose} />
                 </FocusLock>
               </PopoverContent>
-            </Popover>
+            </Popover> */}
+            <IconButton
+              onClick={() => {
+                setIsOpen(!isOpen);
+              }}
+              marginStart={"5px"}
+              bg={"white"}
+              size="sm"
+              icon={<TagMenuIcon src={tagMenuIcon} />}
+              aria-label={""}
+              textAlign={"center"}
+            />
           </TagTitle>
-          <TagWrapper>
-            {tag.map((t: string, i: number) => (
-              <ProfileTag key={i} tagname={t} />
-            ))}
-          </TagWrapper>
+
+          {!isOpen && (
+            <TagWrapper>
+              {tag.map((t: string, i: number) => (
+                <ProfileTag key={i} tagname={t} />
+              ))}
+            </TagWrapper>
+          )}
+          {isOpen && <TagBox selected={tag} />}
         </TagContainer>
       </ProfileContainer>
       <SaveButtonWrapper>
