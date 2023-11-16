@@ -44,6 +44,8 @@ const Profile = () => {
   const [phone, setPhone] = useState("");
   const [tag, setTag] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isEdit, setIsEdis] = useState(false);
+  const [introduction, setIntroduction] = useState("");
   const navigate = useNavigate();
 
   const getUserInfo = () => {
@@ -59,7 +61,7 @@ const Profile = () => {
         },
       })
       .then((response) => {
-        const { userAge, userCampus, userEmail, userGender, userName, userPhoneNumber } = response.data.data;
+        const { userAge, userCampus, userEmail, userGender, userName, userPhoneNumber, userIntroduction } = response.data.data;
         const tags = response.data.data.userTags;
         setEmail(userEmail);
         setName(userName);
@@ -67,7 +69,9 @@ const Profile = () => {
         setCampus(userCampus);
         setGender(userGender);
         setPhone(userPhoneNumber);
-        setTag(tags);
+        setIntroduction(userIntroduction);
+        if (tags) setTag(tags);
+        else if (tags === null) setTag([]);
       })
       .catch((error) => {
         if (error.response.data.state === 417) {
@@ -106,6 +110,45 @@ const Profile = () => {
     if (localStorage.getItem("accessToken") === null) {
       navigate("/signin");
     } else getUserInfo();
+  };
+
+  const editHandler = () => {
+    if (!isEdit) setIsEdis(true);
+    else {
+      const serverUrl = process.env.REACT_APP_SERVER_URL;
+      const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
+      const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
+
+      const userData = {
+        userEmail: email,
+        userIntroduction: introduction,
+        userTags: tag,
+      };
+
+      axios
+        .post(`${serverUrl}UserInfo/ModifyInfo`, userData, {
+          headers: {
+            "Content-Type": "application/json",
+            AccessToken: accessToken,
+          },
+        })
+        .then((response) => {
+          alert("수정되었습니다.");
+        })
+        .catch((error) => {
+          alert("수정에 실패했습니다.");
+        });
+
+      setIsEdis(false);
+    }
+  };
+
+  const handleIntroductionChange = (e: any) => {
+    // event.target.value를 사용하여 textarea의 현재 값에 접근
+    const newValue = e.target.value;
+
+    // setIntroduction을 사용하여 introduction 상태를 업데이트
+    setIntroduction(newValue);
   };
 
   useEffect(() => {
@@ -151,53 +194,59 @@ const Profile = () => {
             </ProfileTextWrapper>
           </ProfileTextContainer>
         </ProfileWrapper>
-        <AboutMeContainer>
-          <AboutMeTitle>About Me</AboutMeTitle>
-          <AboutMeText placeholder="About me" />
-        </AboutMeContainer>
-        <TagContainer>
-          <TagTitle>
-            Tag
-            {/* <TagMenuIcon src={tagMenuIcon} /> */}
-            {/* <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose} placement="right" closeOnBlur={false}>
-              <PopoverTrigger>
-                <IconButton marginStart={"5px"} bg={"white"} size="sm" icon={<TagMenuIcon src={tagMenuIcon} />} aria-label={""} textAlign={"center"} />
-              </PopoverTrigger>
-              
-              <PopoverContent p={5}>
-                <FocusLock persistentFocus={false}>
-                  <PopoverArrow />
-                  <PopoverCloseButton />
-                  <Form onCancel={onClose} />
-                </FocusLock>
-              </PopoverContent>
-            </Popover> */}
-            <IconButton
-              onClick={() => {
-                setIsOpen(!isOpen);
-              }}
-              marginStart={"5px"}
-              bg={"white"}
-              size="sm"
-              icon={<TagMenuIcon src={tagMenuIcon} />}
-              aria-label={""}
-              textAlign={"center"}
-            />
-          </TagTitle>
+        {!isEdit && (
+          <>
+            <AboutMeContainer>
+              <AboutMeTitle style={{ whiteSpace: "pre-line" }}>About Me</AboutMeTitle>
+              {introduction}
+            </AboutMeContainer>
+            <TagContainer>
+              <TagTitle>Tag</TagTitle>
+              <TagWrapper>
+                {tag?.map((t: string, i: number) => (
+                  <ProfileTag key={i} tagname={t} />
+                ))}
+              </TagWrapper>
+            </TagContainer>
+          </>
+        )}
+        {isEdit && (
+          <>
+            <AboutMeContainer style={{ whiteSpace: "pre-line" }}>
+              <AboutMeTitle>About Me</AboutMeTitle>
+              <AboutMeText onChange={handleIntroductionChange} placeholder="About me" />
+            </AboutMeContainer>
+            <TagContainer>
+              <TagTitle>
+                Tag
+                <IconButton
+                  onClick={() => {
+                    setIsOpen(!isOpen);
+                  }}
+                  marginStart={"5px"}
+                  bg={"white"}
+                  size="sm"
+                  icon={<TagMenuIcon src={tagMenuIcon} />}
+                  aria-label={""}
+                  textAlign={"center"}
+                />
+              </TagTitle>
 
-          {!isOpen && (
-            <TagWrapper>
-              {tag.map((t: string, i: number) => (
-                <ProfileTag key={i} tagname={t} />
-              ))}
-            </TagWrapper>
-          )}
-          {isOpen && <TagBox selected={tag} />}
-        </TagContainer>
+              {!isOpen && (
+                <TagWrapper>
+                  {tag?.map((t: string, i: number) => (
+                    <ProfileTag key={i} tagname={t} />
+                  ))}
+                </TagWrapper>
+              )}
+              {isOpen && <TagBox setTag={setTag} selected={tag} />}
+            </TagContainer>
+          </>
+        )}
       </ProfileContainer>
       <SaveButtonWrapper>
-        <Button variant="solid" bg="teal.400" color={"white"} width={"120px"} lineHeight={2.3}>
-          Save
+        <Button onClick={editHandler} variant="solid" bg="teal.400" color={"white"} width={"120px"} lineHeight={2.3}>
+          {isEdit ? "Save" : "Edit"}
         </Button>
       </SaveButtonWrapper>
 

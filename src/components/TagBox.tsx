@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import ProfileTag from "./profileTag";
+import { useEffect, useState, useRef } from "react";
+import ModifyTag from "./ModifyTag";
 import styled from "styled-components";
 
 const TagBoxWrapper = styled.div`
@@ -49,20 +49,9 @@ const TagItemWrapper = styled.div`
 
 const TagItem = (props: any) => {
   return (
-    <TagItemWrapper
-      onClick={() => {
-        console.log("?");
-        props.clickHandlier(props.name);
-      }}
-    >
-      <ProfileTag
-        tagname={props.name}
-        onClick={() => {
-          console.log("?");
-          props.clickHandlier(props.name);
-        }}
-      />
-    </TagItemWrapper>
+    <>
+      <ModifyTag tagname={props.name} clickHandlier={props.clickHandlier} />
+    </>
   );
 };
 
@@ -72,31 +61,36 @@ const TagBox = (props: any) => {
   const [notSelected, setNotSelected] = useState<string[]>([]);
 
   const clickHandlier = (name: string) => {
-    if (selected.includes(name)) {
-      setSelected(selected.filter((item) => item !== name));
+    if (selected?.includes(name)) {
+      setSelected(selected?.filter((item) => item !== name));
       setNotSelected([...notSelected, name]);
     } else {
-      setNotSelected(notSelected.filter((item) => item !== name));
+      console.log("??");
+      setNotSelected(notSelected?.filter((item) => item !== name));
       setSelected([...selected, name]);
     }
-    console.log("ss");
   };
 
   useEffect(() => {
     setSelected(props.selected);
-    setNotSelected(tags.filter((item) => !props.selected.includes(item)));
-  }, [props.selected]);
+    setNotSelected(tags.filter((item) => !props.selected?.includes(item)));
+  }, []);
+
+  useEffect(() => {
+    console.log(selected);
+    props.setTag(selected);
+  }, [selected]);
 
   return (
     <TagBoxWrapper>
       <TagBoxSelected>
         <TagBoxTitle>selected</TagBoxTitle>
-        {selected.map((name: string) => (
+        {selected?.map((name: string) => (
           <TagItem name={name} clickHandlier={clickHandlier} />
         ))}
       </TagBoxSelected>
       <TagBoxNotSelected>
-        {notSelected.map((name: string) => (
+        {notSelected?.map((name: string) => (
           <TagItem name={name} clickHandlier={clickHandlier} />
         ))}
       </TagBoxNotSelected>
