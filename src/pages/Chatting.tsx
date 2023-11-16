@@ -11,9 +11,18 @@ const Chatting = () => {
   useEffect(() => {
     const serverUrl = process.env.REACT_APP_SERVER_URL;
     // const serverUrl = "http://localhost:8080/";
+
+    const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
+    const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
+
     const list = [{}];
     axios
-      .get(`${serverUrl}api/chat/getChatRoomRecord`, { timeout: 1000 })
+      .get(`${serverUrl}chat/getChatRoomRecord`, {
+        headers: {
+          "Content-Type": "application/json",
+          AccessToken: accessToken,
+        }
+      })
       .then((response) => {
         var data = response.data.data;
         for (var i = 0; i < data.length; i++) {
@@ -46,6 +55,7 @@ const Chatting = () => {
       </TitleWrapper>
       <ChattingListContainer>
         {chattingList.map((chattingListItem: any) => (
+          chattingListItem.roomId &&
           <ChattingListItem roomId={chattingListItem.roomId} lastMessage={chattingListItem.lastMessage} lastSender={chattingListItem.lastSender} />
         ))}
       </ChattingListContainer>
