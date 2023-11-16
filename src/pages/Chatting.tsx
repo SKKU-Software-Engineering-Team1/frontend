@@ -9,8 +9,8 @@ const Chatting = () => {
   const [chattingList, setChattingList] = useState([{}]);
 
   useEffect(() => {
-    // const serverUrl = process.env.REACT_APP_SERVER_URL;
-    const serverUrl = "http://localhost:8080/";
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    // const serverUrl = "http://localhost:8080/";
     const list = [{}];
     axios
       .get(`${serverUrl}api/chat/getChatRoomRecord`, { timeout: 1000 })

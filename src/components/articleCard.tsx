@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardBody, CardFooter, ButtonGroup, Button, Image, Stack, Heading, Text, Divider } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const ArticleCard = (props: any) => {
   const imageUrl = {
@@ -32,9 +33,11 @@ const ArticleCard = (props: any) => {
         </CardBody>
         <CardFooter>
           <ButtonGroup spacing="2">
-            <Button variant="solid" colorScheme="blue" bg="teal.400">
-              Read More
-            </Button>
+            <Link to={`/union/?id=${props.id}`}>
+              <Button variant="solid" colorScheme="blue" bg="teal.400">
+                Read More
+              </Button>
+            </Link>
           </ButtonGroup>
         </CardFooter>
       </Card>
