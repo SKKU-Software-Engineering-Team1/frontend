@@ -4,9 +4,35 @@ import styled from "styled-components";
 import { Input, InputGroup, InputRightAddon, Select, Grid } from "@chakra-ui/react";
 import searchIcon from "../assets/searchicon.svg";
 import ArticleCard from "../components/articleCard";
+import axios from "axios";
 
 const Article = () => {
-  const articles: any = [];
+  const [articles, setArticles] = React.useState([]);
+
+  const getArticles = () => {
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
+    const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
+
+    axios
+      .get(`${serverUrl}getArticle`, {
+        headers: {
+          "Content-Type": "application/json",
+          AccessToken: accessToken,
+        },
+      })
+      .then((response) => {
+        const data = response.data.data;
+        setArticles(data);
+      })
+      .catch((error) => {
+        alert("유저 정보를 불러오는데 실패했습니다." + error);
+      });
+  };
+
+  useEffect(() => {
+    getArticles();
+  }, []);
 
   // useEffect(() => {
   //   for (let i = 0; i < 8; i++){
@@ -44,14 +70,9 @@ const Article = () => {
         </SortTextWrapper>
       </SelectWrapper>
       <Grid templateColumns="repeat(4, 1fr)" gap={10} paddingLeft={"100px"} paddingRight={"100px"}>
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <ArticleCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
+        {articles.map((article: any, i: number) => (
+          <ArticleCard image={"Image needs to be changed"} name={article.unionName} />
+        ))}
       </Grid>
     </div>
   );
