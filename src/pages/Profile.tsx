@@ -35,24 +35,16 @@ const Form = (props: any) => {
 };
 
 const Profile = () => {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [campus, setCampus] = useState("");
+  const [phone, setPhone] = useState("");
+  const [tag, setTag] = useState([]);
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = React.useRef(null);
   const navigate = useNavigate();
-
-  const signinChecker = () => {
-    if (localStorage.getItem("accessToken") === null) {
-      navigate("/signin");
-    }
-  };
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordCheck, setPasswordCheck] = useState("");
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState(1);
-  const [campus, setCampus] = useState(1);
-  const [phone, setPhone] = useState("");
 
   const getUserInfo = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -67,16 +59,29 @@ const Profile = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
+        const { userAge, userCampus, userEmail, userGender, userName, userPhoneNumber } = response.data.data;
+        const tags = response.data.data.userTags;
+        setEmail(userEmail);
+        setName(userName);
+        setAge(userAge);
+        setCampus(userCampus);
+        setGender(userGender);
+        setPhone(userPhoneNumber);
+        setTag(tags);
       })
       .catch((error) => {
-        alert("유저 정보를 불러오는데 실패했습니다.");
+        alert("유저 정보를 불러오는데 실패했습니다." + error);
       });
+  };
+
+  const signinChecker = () => {
+    if (localStorage.getItem("accessToken") === null) {
+      navigate("/signin");
+    } else getUserInfo();
   };
 
   useEffect(() => {
     signinChecker();
-    getUserInfo();
   }, []);
 
   return (
@@ -94,27 +99,27 @@ const Profile = () => {
           <ProfileTextContainer>
             <ProfileTextWrapper>
               <ProfileTextTitle>Name</ProfileTextTitle>
-              <ProfileText>최영주</ProfileText>
+              <ProfileText>{name}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>Gender</ProfileTextTitle>
-              <ProfileText>Female</ProfileText>
+              <ProfileText>{gender}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>Age</ProfileTextTitle>
-              <ProfileText>26</ProfileText>
+              <ProfileText>{age}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>Phone Number</ProfileTextTitle>
-              <ProfileText>010-0000-0000</ProfileText>
+              <ProfileText>{phone}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>email</ProfileTextTitle>
-              <ProfileText>test@g.skku.edu</ProfileText>
+              <ProfileText>{email}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>Campus</ProfileTextTitle>
-              <ProfileText>자연과학캠퍼스</ProfileText>
+              <ProfileText>{campus}</ProfileText>
             </ProfileTextWrapper>
           </ProfileTextContainer>
         </ProfileWrapper>
@@ -140,10 +145,9 @@ const Profile = () => {
             </Popover>
           </TagTitle>
           <TagWrapper>
-            <ProfileTag key="key" tagname="tag" />
-            <ProfileTag key="key" tagname="tag" />
-            <ProfileTag key="key" tagname="tag" />
-            <ProfileTag key="key" tagname="tag" />
+            {tag.map((t: string, i: number) => (
+              <ProfileTag key={i} tagname={t} />
+            ))}
           </TagWrapper>
         </TagContainer>
       </ProfileContainer>
@@ -153,15 +157,14 @@ const Profile = () => {
         </Button>
       </SaveButtonWrapper>
 
-      <TitleWrapper>
+      {/* <TitleWrapper>
         <TitleText>관심 추천</TitleText>
       </TitleWrapper>
       <Grid templateColumns="repeat(4, 1fr)" gap={10} paddingLeft={"100px"} paddingRight={"100px"} marginTop={"50px"} marginBottom={"50px"}>
-        {/* 일단 피그마랑 쪼금 비슷하게 했는데.. articlecard를 그냥 써도 될듯 */}
         <PreferenceCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
         <PreferenceCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
         <PreferenceCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-      </Grid>
+      </Grid> */}
     </div>
   );
 };
