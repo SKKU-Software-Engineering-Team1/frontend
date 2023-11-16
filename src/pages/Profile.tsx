@@ -70,7 +70,35 @@ const Profile = () => {
         setTag(tags);
       })
       .catch((error) => {
-        alert("유저 정보를 불러오는데 실패했습니다." + error);
+        if (error.response.data.state === 417) {
+          console.log("만료");
+          // alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+          // localStorage.clear();
+          // navigate("/signin");
+          axios
+            .get(`${serverUrl}UserInfo/userInfo`, {
+              headers: {
+                "Content-Type": "application/json",
+                AccessToken: accessToken,
+                RefreshToken: refToken,
+              },
+            })
+            .then((response) => {
+              localStorage.clear();
+              localStorage.setItem("accessToken", response.data.data.accessToken);
+              localStorage.setItem("refreshToken", response.data.data.refreshToken);
+              getUserInfo();
+            })
+            .catch((error) => {
+              alert("유저 정보를 불러오는데 실패했습니다.");
+              localStorage.clear();
+              navigate("/signin");
+            });
+        } else {
+          alert("유저 정보를 불러오는데 실패했습니다.");
+          localStorage.clear();
+          navigate("/signin");
+        }
       });
   };
 

@@ -21,7 +21,6 @@ const ArticleCard = (props: any) => {
   };
 
   const defaultImage = "./assets/union_tumb/buddy.jpg"; // 기본 이미지 경로 설정
-  console.log(props.category);
   return (
     <div>
       <Card maxW="sm">
