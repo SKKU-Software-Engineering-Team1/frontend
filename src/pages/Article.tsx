@@ -40,6 +40,10 @@ const Article = () => {
     getArticles();
   }, []);
 
+  useEffect(() => {
+    console.log(tags);
+  }, [tags]);
+
   const handleTagChange = (e: any) => {
     const tag = e.target.value;
     setSelectedTag(tag);
