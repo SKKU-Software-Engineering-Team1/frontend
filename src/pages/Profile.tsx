@@ -199,8 +199,8 @@ const Profile = () => {
         </ProfileWrapper>
         {!isEdit && (
           <>
-            <AboutMeContainer>
-              <AboutMeTitle style={{ whiteSpace: "pre-line" }}>About Me</AboutMeTitle>
+            <AboutMeContainer style={{ whiteSpace: "pre-line" }}>
+              <AboutMeTitle>About Me</AboutMeTitle>
               {introduction}
             </AboutMeContainer>
             <TagContainer>

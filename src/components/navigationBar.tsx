@@ -26,6 +26,8 @@ const NavigationBar = () => {
       setCurrentPage("profile");
     } else if (path === "/union/") {
       setCurrentPage("union");
+    } else if (path === "/student/") {
+      setCurrentPage("student");
     }
   }, []);
 

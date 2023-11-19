@@ -61,7 +61,7 @@ const ProfileUnion = () => {
     axios
       .get(`${serverUrl}getUniInfo?Id=${unionId}`)
       .then((response) => {
-        const { unionName, unionRecruit, unionRecruitDateStart, unionRecruitDateEnd, unionSkkuSub, unionDues, unionSns, unionContactPhone, unionTagsString } = response.data.data;
+        const { unionName, unionRecruit, unionRecruitDateStart, unionRecruitDateEnd, unionSkkuSub, unionDues, unionSns, unionContactPhone, unionTags } = response.data.data;
 
         setName(unionName);
         setContents(unionRecruit);
@@ -70,7 +70,7 @@ const ProfileUnion = () => {
         setDues(unionDues);
         setSns(unionSns);
         setPhone(unionContactPhone);
-        setTag(unionTagsString);
+        setTag(unionTags);
       })
       .catch((error) => {
         alert("동아리 정보를 불러오는데 실패했습니다.");
@@ -97,10 +97,9 @@ const ProfileUnion = () => {
         <ProfileTitleContainer>
           <ProfileTitle>{name}</ProfileTitle>
           <ProfileTagContainer>
-            <ProfileTag tagname={"#성균관대학교"} />
-            {/* {tag.map((t: string, i: number) => (
+            {tag.map((t: string, i: number) => (
               <ProfileTag key={i} tagname={t} />
-            ))} */}
+            ))}
           </ProfileTagContainer>
         </ProfileTitleContainer>
 

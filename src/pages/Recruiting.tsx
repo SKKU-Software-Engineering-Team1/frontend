@@ -9,19 +9,52 @@ import RecruitingCard from "../components/recruitingCard";
 const Recruiting = () => {
   const navigate = useNavigate();
   const serverUrl = process.env.REACT_APP_SERVER_URL;
+  const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
+  const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
 
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string>("");
+  const [userList, setUserList] = useState<object[]>([]);
 
   useEffect(() => {
     axios
-      .get(`${serverUrl}UserInfo/userInfo`)
+      .get(`${serverUrl}UserInfo/userInfo`, {
+        headers: {
+          "Content-Type": "application/json",
+          AccessToken: accessToken,
+        },
+      })
       .then((response) => {
         let userRole = response.data.data.userRole;
-        if (userRole != "ROLE_ADMIN") {
+        if (userRole !== "ROLE_ADMIN") {
           alert("동아리 운영진만 접근 가능합니다.");
           navigate("/");
         }
+        const unionId = response.data.data.userId;
+        axios
+          .get(`${serverUrl}recruit/userList?union_id=${unionId}`, {
+            headers: {
+              "Content-Type": "application/json",
+              AccessToken: accessToken,
+            },
+          })
+          .then((response) => {
+            const data = response.data.data;
+
+            data.forEach((d: any) => {
+              if (d.userRole === "ROLE_ADMIN") return;
+              const userData = {
+                id: d.userId,
+                name: d.userName,
+                introduce: d.userIntroduction,
+                tags: d.userTags,
+              };
+              setUserList((userList: any) => [...userList, userData]);
+            });
+          })
+          .catch((error) => {
+            alert("유저 정보를 불러오는데 실패했습니다." + error);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -36,8 +69,8 @@ const Recruiting = () => {
   const profilecontents = {
     name: "최영주",
     introduce: "안녕하세요. 저의 이름은 최영주고 취미는 운동과 코딩이며 다양한 사람들과 어울리는 것을 좋아합니다. 평소 코딩 동아리에 관심이 있어 지원하고 싶어 가입했습니다. ",
-    tags: ["친목", "스포츠", "제작"]
-  }
+    tags: ["친목", "스포츠", "제작", "????????????????????????"],
+  };
 
   return (
     <div>
@@ -68,21 +101,17 @@ const Recruiting = () => {
           <SortText>최신순</SortText>
         </SortTextWrapper>
       </SelectWrapper>
-      
+
       <Grid templateColumns="repeat(4, 1fr)" gap={10} paddingLeft={"100px"} paddingRight={"100px"}>
-        <RecruitingCard contents={profilecontents} />
-        <RecruitingCard contents={profilecontents} />
-        <RecruitingCard contents={profilecontents} />
-        <RecruitingCard contents={profilecontents} />
-        <RecruitingCard contents={profilecontents} />
-        
+        {userList.map((user: any) => (
+          <RecruitingCard contents={user} />
+        ))}
       </Grid>
     </div>
   );
 };
 
 export default Recruiting;
-
 
 const TitleWrapper = styled.div`
   display: flex;

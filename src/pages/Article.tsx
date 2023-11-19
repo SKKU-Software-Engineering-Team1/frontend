@@ -90,7 +90,7 @@ const Article = () => {
       </SelectWrapper>
       <Grid templateColumns="repeat(4, 1fr)" gap={10} paddingLeft={"100px"} paddingRight={"100px"}>
         {showArticles.map((article: any, i: number) => (
-          <ArticleCard image={"Image needs to be changed"} id={article.id} name={article.unionName} category={article.unionCategory} />
+          <ArticleCard image={"Image needs to be changed"} id={article.unions_id} name={article.unionName} category={article.unionCategory} />
         ))}
       </Grid>
     </div>
