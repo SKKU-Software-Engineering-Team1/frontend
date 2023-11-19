@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import signImg from "../assets/signimg.png";
 import logo from "../assets/logo.svg";
 import { Input, Button, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TagBox from "../components/TagBox";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const SignUp = () => {
   const [gender, setGender] = useState(1);
   const [campus, setCampus] = useState(1);
   const [phone, setPhone] = useState("");
+  const [tag, setTag] = useState([]);
 
   const navigateToSignIn = () => {
     navigate("/signin");
@@ -25,6 +27,10 @@ const SignUp = () => {
   const onClickSubmit = () => {
     if (!email || !password || !passwordCheck || !name || !age || !phone) {
       alert("모든 항목을 입력해주세요.");
+      return;
+    }
+    if (tag.length === 0) {
+      alert("하나 이상의 태그를 선택해 주세요.");
       return;
     }
     if (password != passwordCheck) {
@@ -46,7 +52,7 @@ const SignUp = () => {
       userGender: gender === 1 ? "MALE" : "FEMALE",
       userPhoneNumber: phone,
       userCampus: campus === 1 ? "HUMANITIES_AND_SOCIAL_SCIENCES" : "NATURAL_SCIENCE",
-      userTags: ["맛집"],
+      userTags: tag,
     };
 
     // Replace 'your_login_api_url' with the actual URL of your login API
@@ -163,6 +169,7 @@ const SignUp = () => {
           <InputText>Password Check</InputText>
           <Input placeholder="Password Check" type="Password" onChange={onChangePasswordCheck} />
         </InputWrapper>
+        <TagBox setTag={setTag} selected={tag} />
 
         <Button variant="solid" bg="teal.400" color={"white"} width={"100%"} height={"100px"} marginTop={"40px"} lineHeight={2.3} onClick={onClickSubmit}>
           SUBMIT
