@@ -50,10 +50,6 @@ const RecruitingStudent = () => {
       });
   }, []);
 
-  useEffect(() => {
-    console.log(name, email);
-  }, [name, email]);
-
   const chatStarter = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL;
     const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
