@@ -61,7 +61,10 @@ const Profile = () => {
         },
       })
       .then((response) => {
-        const { userAge, userCampus, userEmail, userGender, userName, userPhoneNumber, userIntroduction } = response.data.data;
+        const { userId, userRole, userAge, userCampus, userEmail, userGender, userName, userPhoneNumber, userIntroduction } = response.data.data;
+        if (userRole === "ROLE_ADMIN") {
+          navigate(`/union/?id=${userId}`);
+        }
         const tags = response.data.data.userTags;
         setEmail(userEmail);
         setName(userName);
@@ -214,7 +217,7 @@ const Profile = () => {
           <>
             <AboutMeContainer style={{ whiteSpace: "pre-line" }}>
               <AboutMeTitle>About Me</AboutMeTitle>
-              <AboutMeText onChange={handleIntroductionChange} placeholder="About me" />
+              <AboutMeText value={introduction} onChange={handleIntroductionChange} placeholder="About me" />
             </AboutMeContainer>
             <TagContainer>
               <TagTitle>

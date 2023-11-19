@@ -46,7 +46,7 @@ const SignUp = () => {
       userGender: gender === 1 ? "MALE" : "FEMALE",
       userPhoneNumber: phone,
       userCampus: campus === 1 ? "HUMANITIES_AND_SOCIAL_SCIENCES" : "NATURAL_SCIENCE",
-      userTags: [],
+      userTags: ["맛집"],
     };
 
     // Replace 'your_login_api_url' with the actual URL of your login API
