@@ -35,12 +35,7 @@ const Form = (props: any) => {
 };
 
 const ProfileUnion = () => {
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [campus, setCampus] = useState("");
-
-  const { onOpen, onClose, isOpen } = useDisclosure();
-  const firstFieldRef = React.useRef(null);
+  const unionId = new URL(window.location.href).searchParams.get("id");
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -49,19 +44,19 @@ const ProfileUnion = () => {
   const [dateEnd, setDateEnd] = useState("");
   const [dues, setDues] = useState("");
   const [sns, setSns] = useState("");
-  const [phone, setPhone] = useState("");
   const [tag, setTag] = useState([]);
+  const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");
 
   const getUnionInfo = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL;
     const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
     const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
-    const unionId = new URL(window.location.href).searchParams.get("id");
 
     axios
       .get(`${serverUrl}getUniInfo?Id=${unionId}`)
       .then((response) => {
-        const { unionName, unionRecruit, unionRecruitDateStart, unionRecruitDateEnd, unionSkkuSub, unionDues, unionSns, unionContactPhone, unionTagsString } = response.data.data;
+        const { unionName, unionRecruit, unionRecruitDateStart, unionRecruitDateEnd, unionSkkuSub, unionDues, unionSns, unionContactPhone, unionTags } = response.data.data;
 
         setName(unionName);
         setContents(unionRecruit);
@@ -69,11 +64,58 @@ const ProfileUnion = () => {
         setDateEnd(unionRecruitDateEnd);
         setDues(unionDues);
         setSns(unionSns);
-        setPhone(unionContactPhone);
-        setTag(unionTagsString);
+        setTag(unionTags);
       })
       .catch((error) => {
         alert("동아리 정보를 불러오는데 실패했습니다.");
+      });
+    axios
+      .get(`${serverUrl}UserInfo/userInfo`, {
+        headers: {
+          "Content-Type": "application/json",
+          AccessToken: accessToken,
+        },
+      })
+      .then((response) => {
+        const { userName, userRole } = response.data.data;
+        setUserName(userName);
+        setUserRole(userRole);
+      })
+      .catch((error) => {
+        if (error.response.data.state === 417) {
+          alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+          localStorage.clear();
+          navigate("/signin");
+        } else {
+          alert("유저 정보를 불러오는데 실패했습니다.");
+          localStorage.clear();
+          navigate("/signin");
+        }
+      });
+  };
+
+  const chatStarter = () => {
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
+    const accessToken = localStorage.getItem("accessToken") || "defaultAccessToken";
+    const refToken = localStorage.getItem("refreshToken") || "defaultrefToken";
+
+    const userData = {
+      receiverEmail: unionId,
+      roomName: `${name}지원 - ${userName}`,
+    };
+    axios
+      .post(`${serverUrl}chat/createChatRoom`, userData, {
+        headers: {
+          "Content-Type": "application/json",
+          AccessToken: accessToken,
+        },
+      })
+      .then((response) => {
+        alert("채팅방이 생성되었습니다.");
+        navigate("/chatting");
+      })
+      .catch((error) => {
+        alert("채팅방 생성에 실패했습니다.");
       });
   };
 
@@ -87,6 +129,10 @@ const ProfileUnion = () => {
     signinChecker();
   }, []);
 
+  useEffect(() => {
+    console.log(`${name}지원 - ${userName}`);
+  }, [name, userName]);
+
   return (
     <div>
       <NavigationBar />
@@ -97,10 +143,9 @@ const ProfileUnion = () => {
         <ProfileTitleContainer>
           <ProfileTitle>{name}</ProfileTitle>
           <ProfileTagContainer>
-            <ProfileTag tagname={"#성균관대학교"} />
-            {/* {tag.map((t: string, i: number) => (
+            {tag.map((t: string, i: number) => (
               <ProfileTag key={i} tagname={t} />
-            ))} */}
+            ))}
           </ProfileTagContainer>
         </ProfileTitleContainer>
 
@@ -120,19 +165,11 @@ const ProfileUnion = () => {
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>Fee</ProfileTextTitle>
-              <ProfileText>{dues}₩</ProfileText>
+              <ProfileText>{dues === "없음" ? "Free" : `${dues} ₩`}</ProfileText>
             </ProfileTextWrapper>
             <ProfileTextWrapper>
               <ProfileTextTitle>SNS</ProfileTextTitle>
               <ProfileText>{sns}</ProfileText>
-            </ProfileTextWrapper>
-            <ProfileTextWrapper>
-              <ProfileTextTitle>Phone Number</ProfileTextTitle>
-              <ProfileText>{phone}</ProfileText>
-            </ProfileTextWrapper>
-            <ProfileTextWrapper>
-              <ProfileTextTitle>Campus</ProfileTextTitle>
-              <ProfileText>{campus}</ProfileText>
             </ProfileTextWrapper>
           </ProfileTextContainer>
         </ProfileWrapper>
@@ -142,19 +179,10 @@ const ProfileUnion = () => {
         </AboutMeContainer>
       </ProfileContainer>
       <SaveButtonWrapper>
-        <Button variant="solid" bg="teal.400" color={"white"} width={"120px"} lineHeight={2.3}>
-          Save
+        <Button onClick={chatStarter} variant="solid" bg="teal.400" color={"white"} width={"120px"} lineHeight={2.3}>
+          {userRole === "ROLE_ADMIN" ? "Edit" : "Contact"}
         </Button>
       </SaveButtonWrapper>
-
-      {/* <TitleWrapper>
-        <TitleText>관심 추천</TitleText>
-      </TitleWrapper>
-      <Grid templateColumns="repeat(4, 1fr)" gap={10} paddingLeft={"100px"} paddingRight={"100px"} marginTop={"50px"} marginBottom={"50px"}>
-        <PreferenceCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <PreferenceCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-        <PreferenceCard image={"Image needs to be changed"} name={"성균관대학교 동아리"} />
-      </Grid> */}
     </div>
   );
 };

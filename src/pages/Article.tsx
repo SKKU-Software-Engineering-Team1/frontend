@@ -72,15 +72,14 @@ const Article = () => {
         </InputWrapper>
       </TitleWrapper>
       <SelectWrapper>
-        <Select placeholder="TAG" size="sm" width={"120px"} marginEnd={"15px"} onChange={handleTagChange}>
+        <Select placeholder="CATEGORY" size="sm" width={"120px"} marginEnd={"15px"} onChange={handleTagChange}>
           {tags.map((tag: string) => (
             <option value={tag}>{tag}</option>
           ))}
         </Select>
         <Select placeholder="All View" width={"120px"} size="sm">
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
+          <option value="option1">이름순</option>
+          <option value="option2">이름역순</option>
         </Select>
         <SortTextWrapper>
           <SortText>최신순</SortText>
@@ -90,7 +89,7 @@ const Article = () => {
       </SelectWrapper>
       <Grid templateColumns="repeat(4, 1fr)" gap={10} paddingLeft={"100px"} paddingRight={"100px"}>
         {showArticles.map((article: any, i: number) => (
-          <ArticleCard image={"Image needs to be changed"} id={article.id} name={article.unionName} category={article.unionCategory} />
+          <ArticleCard image={"Image needs to be changed"} id={article.unions_id} name={article.unionName} category={article.unionCategory} />
         ))}
       </Grid>
     </div>

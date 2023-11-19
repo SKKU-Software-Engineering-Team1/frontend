@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import signImg from '../assets/signimg.png';
-import logo from '../assets/logo.svg';
-import { Input, Button, RadioGroup, Radio, Stack } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import TagBox from '../components/TagBox';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import signImg from "../assets/signimg.png";
+import logo from "../assets/logo.svg";
+import { Input, Button, RadioGroup, Radio, Stack } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import TagBox from "../components/TagBox";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const SignUp = () => {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState(1);
   const [campus, setCampus] = useState(1);
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState("");
   const [tag, setTag] = useState([]);
 
   const navigateToSignIn = () => {
@@ -31,6 +31,10 @@ const SignUp = () => {
     }
     if (tag.length === 0) {
       alert('하나 이상의 태그를 선택해 주세요.');
+      return;
+    }
+    if (tag.length === 0) {
+      alert("하나 이상의 태그를 선택해 주세요.");
       return;
     }
     if (password != passwordCheck) {
@@ -51,8 +55,7 @@ const SignUp = () => {
       userName: name,
       userGender: gender === 1 ? 'MALE' : 'FEMALE',
       userPhoneNumber: phone,
-      userCampus:
-        campus === 1 ? 'HUMANITIES_AND_SOCIAL_SCIENCES' : 'NATURAL_SCIENCE',
+      userCampus: campus === 1 ? "HUMANITIES_AND_SOCIAL_SCIENCES" : "NATURAL_SCIENCE",
       userTags: tag,
     };
 
