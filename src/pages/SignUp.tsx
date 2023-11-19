@@ -10,23 +10,27 @@ import TagBox from "../components/TagBox";
 const SignUp = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordCheck, setPasswordCheck] = useState("");
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordCheck, setPasswordCheck] = useState('');
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
   const [gender, setGender] = useState(1);
   const [campus, setCampus] = useState(1);
   const [phone, setPhone] = useState("");
   const [tag, setTag] = useState([]);
 
   const navigateToSignIn = () => {
-    navigate("/signin");
+    navigate('/signin');
   };
 
   const onClickSubmit = () => {
     if (!email || !password || !passwordCheck || !name || !age || !phone) {
-      alert("모든 항목을 입력해주세요.");
+      alert('모든 항목을 입력해주세요.');
+      return;
+    }
+    if (tag.length === 0) {
+      alert('하나 이상의 태그를 선택해 주세요.');
       return;
     }
     if (tag.length === 0) {
@@ -34,11 +38,11 @@ const SignUp = () => {
       return;
     }
     if (password != passwordCheck) {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert('비밀번호가 일치하지 않습니다.');
       return;
     }
-    if (!(email.endsWith("@skku.edu") || email.endsWith("@g.skku.edu"))) {
-      alert("성균관대학교 학생만 가입 가능합니다.");
+    if (!(email.endsWith('@skku.edu') || email.endsWith('@g.skku.edu'))) {
+      alert('성균관대학교 학생만 가입 가능합니다.');
       return;
     }
     //sign up api
@@ -49,7 +53,7 @@ const SignUp = () => {
       userPassword: password,
       userAge: age,
       userName: name,
-      userGender: gender === 1 ? "MALE" : "FEMALE",
+      userGender: gender === 1 ? 'MALE' : 'FEMALE',
       userPhoneNumber: phone,
       userCampus: campus === 1 ? "HUMANITIES_AND_SOCIAL_SCIENCES" : "NATURAL_SCIENCE",
       userTags: tag,
@@ -59,23 +63,27 @@ const SignUp = () => {
     axios
       .post(`${serverUrl}login/signUp`, userData)
       .then((response) => {
-        alert("회원가입이 완료되었습니다.");
+        alert('회원가입이 완료되었습니다.');
 
-        navigate("/signin");
+        navigate('/signin');
       })
       .catch((error) => {
-        if (error.response && error.response.data && error.response.data.message) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
           alert(error.response.data.message);
         } else {
-          alert("회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+          alert('회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.');
         }
       });
 
-    setEmail("");
-    setPassword("");
-    setPasswordCheck("");
-    setName("");
-    setAge("");
+    setEmail('');
+    setPassword('');
+    setPasswordCheck('');
+    setName('');
+    setAge('');
     setGender(1);
   };
   const onChangeName = (e: any) => {
@@ -139,7 +147,7 @@ const SignUp = () => {
           <InputText>Campus</InputText>
           <RadioGroup defaultValue="1" onChange={onChangeCampus}>
             <Stack spacing={5} direction="column">
-              {" "}
+              {' '}
               <Radio colorScheme="teal" value="1">
                 Humanities and Social Sciences
               </Radio>
@@ -159,19 +167,40 @@ const SignUp = () => {
         </InputWrapper>
         <InputWrapper>
           <InputText>Phone</InputText>
-          <Input placeholder="010-XXXX-XXXX" type="text" onChange={onChangePhone} />
+          <Input
+            placeholder="010-XXXX-XXXX"
+            type="text"
+            onChange={onChangePhone}
+          />
         </InputWrapper>
         <InputWrapper>
           <InputText>Password</InputText>
-          <Input placeholder="Password" type="Password" onChange={onChangePassword} />
+          <Input
+            placeholder="Password"
+            type="Password"
+            onChange={onChangePassword}
+          />
         </InputWrapper>
         <InputWrapper>
           <InputText>Password Check</InputText>
-          <Input placeholder="Password Check" type="Password" onChange={onChangePasswordCheck} />
+          <Input
+            placeholder="Password Check"
+            type="Password"
+            onChange={onChangePasswordCheck}
+          />
         </InputWrapper>
         <TagBox setTag={setTag} selected={tag} />
 
-        <Button variant="solid" bg="teal.400" color={"white"} width={"100%"} height={"100px"} marginTop={"40px"} lineHeight={2.3} onClick={onClickSubmit}>
+        <Button
+          variant="solid"
+          bg="teal.400"
+          color={'white'}
+          width={'100%'}
+          height={'100px'}
+          marginTop={'40px'}
+          lineHeight={2.3}
+          onClick={onClickSubmit}
+        >
           SUBMIT
         </Button>
         <RegisterWrapper>
