@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from "@chakra-ui/react";
 import axios from "axios";
+import useInterval from "../utils/useInterval";
 
 const ChattingModal = ({ isOpen, onClose, id }: { isOpen: boolean; onClose: () => void; id: string }) => {
   const [initialText, setInitialText] = useState("");
@@ -17,8 +18,7 @@ const ChattingModal = ({ isOpen, onClose, id }: { isOpen: boolean; onClose: () =
 
   type ChattingListType = Array<Array<string>>;
 
-  useEffect(() => {
-    // const serverUrl = 'http://localhost:8080/';
+  const getChat = async () => {
     var chattingList: ChattingListType = [];
     axios
       .get(`${serverUrl}UserInfo/userInfo`, {
@@ -59,8 +59,43 @@ const ChattingModal = ({ isOpen, onClose, id }: { isOpen: boolean; onClose: () =
         console.log(error);
       });
     setChattingList(chattingList);
+  }
+
+  const getChatInterval = () => {
+    var chattingList: ChattingListType = [];
+    axios
+      .get(`${serverUrl}chat/findAllTextWithRoomID/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          AccessToken: accessToken,
+        },
+      })
+      .then((response) => {
+        var data = response.data.data;
+        data.sort((a: any, b: any) => a.id - b.id);
+        var initialText = data[0].chatTextContent;
+        setInitialText(initialText);
+        setRoomName(data[0].chatRoom.roomName);
+        for (var i = 1; i < data.length; i++) {
+          var sender = data[i].chatTextWriter == myName ? "me" : "you";
+          var text = data[i].chatTextContent;
+          var chat = [sender, text];
+          chattingList.push(chat);
+        }
+        setChattingList(chattingList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  useInterval(() => {
+    getChatInterval();
+  }, 10000);
+
+  useEffect(() => {
+    getChat();
   }, []);
-  //TODO: Setinterval
 
   useEffect(() => {
     if (messageEndRef.current) {
