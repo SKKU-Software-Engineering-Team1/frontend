@@ -9,15 +9,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import React, { useEffect, useState } from "react";
-import NavigationBar from "../components/navigationBar";
-import styled from "styled-components";
-import profilelogo from "../assets/profilelogo.svg";
-import tagMenuIcon from "../assets/tagmenuicon.svg";
-import ProfileTag from "../components/profileTag";
-import { Button } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-
 const RecruitingStudent = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
