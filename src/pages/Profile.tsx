@@ -12,6 +12,8 @@ import PreferenceCard from "../components/preferenceCard";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TagBox from "../components/TagBox";
+import chatbotIcon from "../assets/chatbot.png";
+import RecommendationModal from "../components/recommendationModal";
 
 const Form = (props: any) => {
   return (
@@ -43,10 +45,16 @@ const Profile = () => {
   const [campus, setCampus] = useState("");
   const [phone, setPhone] = useState("");
   const [tag, setTag] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isTagOpen, setIsTagOpen] = useState(false);
   const [isEdit, setIsEdis] = useState(false);
   const [introduction, setIntroduction] = useState("");
   const navigate = useNavigate();
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const onClickIcon = () => {
+    onOpen()
+  }
 
   const getUserInfo = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -224,7 +232,7 @@ const Profile = () => {
                 Tag
                 <IconButton
                   onClick={() => {
-                    setIsOpen(!isOpen);
+                    setIsTagOpen(!isTagOpen);
                   }}
                   marginStart={"5px"}
                   bg={"white"}
@@ -235,14 +243,14 @@ const Profile = () => {
                 />
               </TagTitle>
 
-              {!isOpen && (
+              {!isTagOpen && (
                 <TagWrapper>
                   {tag?.map((t: string, i: number) => (
                     <ProfileTag key={i} tagname={t} />
                   ))}
                 </TagWrapper>
               )}
-              {isOpen && <TagBox setTag={setTag} selected={tag} />}
+              {isTagOpen && <TagBox setTag={setTag} selected={tag} />}
             </TagContainer>
           </>
         )}
@@ -252,7 +260,10 @@ const Profile = () => {
           {isEdit ? "Save" : "Edit"}
         </Button>
       </SaveButtonWrapper>
-
+      <ChatbotIconWrapper onClick={onClickIcon}>
+        <ChatbotIcon src={chatbotIcon} />
+      </ChatbotIconWrapper>
+      <RecommendationModal onClose={onClose} isOpen={isOpen} />
       {/* <TitleWrapper>
         <TitleText>관심 추천</TitleText>
       </TitleWrapper>
@@ -414,3 +425,27 @@ const SaveButtonWrapper = styled.div`
   margin-right: 2.5%;
   margin-bottom: 40px;
 `;
+
+
+const ChatbotIconWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  margin-right: 2.5%;
+  margin-bottom: 40px;
+  background: white;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+`;
+
+const ChatbotIcon = styled.img`
+  width: 70px;
+  height: 70px;
+`;
+
